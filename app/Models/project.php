@@ -11,4 +11,10 @@ class project extends Model
       protected $fillable = 
    ["name","description","cover_img"]
       ;
+
+      
+    // un post può avere molte tecnologie
+    public function technologies() {
+      return $this->belongsToMany(Technology::class);
+  }
 }
