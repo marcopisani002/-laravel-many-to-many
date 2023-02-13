@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @php
-    $title = 'Post #' . $post->id;
+    $title = 'Progetto #' . $post->id;
 @endphp
 
 @section('title', $title)
@@ -29,7 +29,11 @@
             <div class="card-body text-white">
                 <div class="card-title"><strong class="px-3 text-warning">Nome:</strong>{{ $post->name }}</div>
                 <p class="card-text"><strong class="px-3 text-warning">Descrizione:</strong>{{ $post->description }}</p>
-                
+                <div class="card-title"><strong class="px-3 text-warning">Tecnologie:</strong>
+                    @foreach ($post->technologies as $tech)
+                      <span class="badge rounded-pill text-bg-warning text-primary fw-bold">{{ $tech->name }}</span>
+                    @endforeach
+                  </div>
                 <div><strong class="px-3 text-warning">ID:</strong > {{ $post->id }} </div>
             </div>
         </div>

@@ -18,6 +18,7 @@
         <th>Nome</th>
         <th>Descrizione</th>
         <th>GITHUB</th>
+        <th>tecnologie</th>
         <th>Azioni</th>
       </tr>
 
@@ -32,6 +33,16 @@
           <td class="text-center pt-4">{{ $post->name }}</td>
           <td class="text-center pt-4">{{ $post->description }}</td>
           <td><img src="https://kinsta.com/wp-content/uploads/2018/04/what-is-github-1-1-1024x512.png" class="my-with-a"><a href="www.github.com"></a></td>
+          <td class="text-center pt-4">
+            {{-- $post->technologies = Una collection (array) di istanze del model Technology.
+                  Tutti le tecnologie associate al post corrente --}}
+            @foreach ($post->technologies as $tech)
+            
+              {{ $tech->name . ' ' }}
+            @endforeach
+
+            
+          </td>
           <td class="text-center pt-4">
             <a href="{{ route('admin.posts.edit', $post->id) }}" class="btn btn-warning"><i class="fas fa-eye"></i>Edit</a>
             <a href="{{ route('admin.posts.show', $post->id) }}" class="btn btn-info"><i class="fas fa-eye"></i>Show</a>

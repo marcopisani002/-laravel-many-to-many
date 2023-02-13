@@ -20,6 +20,36 @@
       @enderror
     </div>
 
+
+    <div class="mb-3">
+      <label class="form-label">Tecnologie:</label>
+      <br>
+      {{-- una checkbox per ogni tag disponibile. L'utente sceglie quali e quanti associare a questo post --}}
+      @foreach ($technologies as $tech)
+      
+        <div class="form-check form-check-inline @error('technologies') is-invalid @enderror">
+          
+          {{-- Il name dell'input ha come suffisso le quadre [] che indicheranno al server,
+                di creare un array con i vari tech che stiamo inviando --}}
+          <input class="form-check-input @error('technologies') is-invalid @enderror" type="checkbox"
+            id="tagCheckbox_{{ $loop->index }}" value="{{ $tech->id }}" name="technologies[]"
+            {{-- Preseleziono i tag già assegnati al post, aggiungendo l'attributo checked sugli input
+              controllo se la collection dei tag associati a questo post,
+              contiene l'id del tag che sto stampando in questo momento --}}
+            {{ $post->technologies->contains('id', $tech->id) ? 'checked' : '' }}>
+            <label class="form-check-label" for="tagCheckbox_{{ $loop->index }}">{{ $tech->name }}</label>
+
+        </div>
+      @endforeach
+
+      @error('technologies')
+        <div class="invalid-feedback">
+          {{ $message }}
+        </div>
+      @enderror
+    </div>
+
+
     <div class="mb-3">
       <label class="form-label">Contenuto</label>
       <textarea name="description" cols="30" rows="5" class="form-control @error('description') is-invalid @enderror">{{ old('description', $post->description) }}</textarea>

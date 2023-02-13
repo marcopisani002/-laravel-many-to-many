@@ -6,22 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePostRequest;
 use App\Http\Requests\Admin\StoreprojectRequest;
 use App\Models\project;
+use App\Models\Technology;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project as XmlProject;
 use SebastianBergmann\CodeCoverage\Report\Xml\Projects;
 
-class PostController extends Controller {
+class PostController extends Controller
+{
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() {
+    public function index()
+    {
         $posts = project::all();
-
+        $technologies = Technology::all();
         return view("admin.posts.index", [
-            "posts" => $posts
+            "posts" => $posts,
+           "technologies"=>$technologies
         ]);
     }
 
@@ -30,8 +34,10 @@ class PostController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create() {
-        return view("admin.posts.create");
+    public function create()
+    {
+        $technologies = Technology::all();
+        return view("admin.posts.create",compact("technologies"));
     }
 
     /**
@@ -40,10 +46,18 @@ class PostController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostRequest $request) {
+    public function store(StorePostRequest $request)
+    {
         $data = $request->all();
 
         $post = Project::create($data);
+
+        // Controlla che nei dati che il server sta ricevendo, ci sia un valore per la chiave "techonologies".
+        if ($request->has("technologies")) {
+            // if (key_exists("technologies", $data)) {
+            $post->technologies()->attach($data["technologies"]);
+        }
+
 
         return redirect()->route("admin.posts.show", $post->id);
     }
@@ -54,7 +68,8 @@ class PostController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Project $post) {
+    public function show(Project $post)
+    {
         return view("admin.posts.show", compact("post"));
     }
 
@@ -64,12 +79,14 @@ class PostController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) {
+    public function edit($id)
+    {
         $post = Project::findOrFail($id);
-
-        return view("admin.posts.edit", compact("post"));
+        // recupero un array con TUTTI i techs nel mio db.
+        $technologies = Technology::all();
+        return view("admin.posts.edit", compact("post","technologies"));
     }
-    
+
 
     /**
      * Update the specified resource in storage.
@@ -78,11 +95,13 @@ class PostController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StorePostRequest $request, $id) {
+    public function update(StorePostRequest $request, $id)
+    {
         $post = Project::findOrFail($id);
         $data = $request->all();
 
         $post->update($data);
+        $post->technologies()->sync($data["technologies"]);
         return redirect()->route("admin.posts.index");
     }
 
@@ -92,7 +111,8 @@ class PostController extends Controller {
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) {
+    public function destroy($id)
+    {
         //
     }
 }
